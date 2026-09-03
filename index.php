@@ -20,11 +20,11 @@ $pageDesc = 'En plats för gemensamma intressen och diskussioner.';
         <img src="/assets/img/logo.png" accesskey="" alt="Logotyp för LifeForum" class="logo">
         <?php if (isset($_SESSION['user_id'])): ?>
             <p>Välkommen, <?= htmlspecialchars((string) $_SESSION['first_name'], ENT_QUOTES, 'UTF-8') ?>.</p>
-            <a href="logout.php">Logga ut</a>
+            <a href="logout">Logga ut</a>
         <?php else: ?>
             <p>En plats för gemensamma intressen och diskussioner.</p>
-            <a href="login.php">Logga in</a>
-            <a href="register.php">Skapa konto</a>
+            <a href="login">Logga in</a>
+            <a href="register">Skapa konto</a>
         <?php endif; ?>
     </main>
     <script src="assets/js/app.js" defer></script>

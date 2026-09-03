@@ -5,7 +5,7 @@ declare(strict_types=1);
 session_start();
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             ]);
 
-            header('Location: login.php?registered=1');
+            header('Location: login?registered=1');
             exit;
         } catch (PDOException $exception) {
             if (($exception->errorInfo[1] ?? null) === 1062) {
@@ -69,7 +69,7 @@ function escape(string $value): string {
 <body>
     <main class="auth-page">
         <!-- Visste inte om man fick använda ikon-libraries för denna uppgiften så använde jag en enkel HTML-kod istället -->
-        <a class="back-link" href="index.php"><p>&#8592;</p> Tillbaka till LifeForum</a>
+        <a class="back-link" href="index"><p>&#8592;</p> Tillbaka till LifeForum</a>
         <section class="auth-card">
             <img src="/assets/img/logo.png" accesskey="" alt="Logotyp för LifeForum" class="auth-logo">
             <div class="auth-description">
@@ -105,7 +105,7 @@ function escape(string $value): string {
                 <button type="submit">Skapa konto</button>
             </form>
 
-            <p class="form-footer">Har du redan ett konto? <a href="login.php">Logga in</a></p>
+            <p class="form-footer">Har du redan ett konto? <a href="login">Logga in</a></p>
         </section>
     </main>
 </body>

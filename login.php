@@ -5,7 +5,7 @@ declare(strict_types=1);
 session_start();
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: index');
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = (int) $user['id'];
             $_SESSION['first_name'] = $user['first_name'];
 
-            header('Location: index.php');
+            header('Location: index');
             exit;
         }
     }
@@ -57,7 +57,7 @@ function escape(string $value): string {
 <body>
     <main class="auth-page">
         <!-- Visste inte om man fick använda ikon-libraries för denna uppgiften så använde jag en enkel HTML-kod istället -->
-        <a class="back-link" href="index.php"><p>&#8592;</p> Tillbaka till LifeForum</a>
+        <a class="back-link" href="index"><p>&#8592;</p> Tillbaka till LifeForum</a>
         <section class="auth-card">
             <img src="/assets/img/logo.png" accesskey="" alt="Logotyp för LifeForum" class="auth-logo">
             <div class="auth-description">
@@ -89,7 +89,7 @@ function escape(string $value): string {
                 <button type="submit">Logga in</button>
             </form>
 
-            <p class="form-footer">Har du inget konto? <a href="register.php">Skapa konto</a></p>
+            <p class="form-footer">Har du inget konto? <a href="register">Skapa konto</a></p>
         </section>
     </main>
 </body>
