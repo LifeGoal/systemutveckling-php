@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'E-postadress eller lösenord är fel.';
     } else {
         $database = getDatabaseConnection();
-        $statement = $database->prepare('SELECT id, first_name, password_hash FROM users WHERE email = :email LIMIT 1');
+        $statement = $database->prepare('SELECT id, first_name, last_name, password_hash FROM users WHERE email = :email LIMIT 1');
         $statement->execute(['email' => $email]);
         $user = $statement->fetch();
 
@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
             $_SESSION['user_id'] = (int) $user['id'];
             $_SESSION['first_name'] = $user['first_name'];
+            $_SESSION['last_name'] = $user['last_name'];
 
             header('Location: index');
             exit;
@@ -49,7 +50,7 @@ function escape(string $value): string {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Logga in | LifeForum</title>
+    <title>LifeForum - Logga in</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/auth.css">
 </head>
