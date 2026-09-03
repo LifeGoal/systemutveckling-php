@@ -1,0 +1,164 @@
+:root {
+	--input: #27272a;
+	--card: #111113;
+	--danger: #fca5a5;
+	--danger-background: #2a1517;
+	--success: #86efac;
+	--success-background: #10251d;
+}
+
+.auth-page {
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	background: radial-gradient(circle at 50% -20%, #06234a 0, var(--background) 42rem);
+}
+
+.auth-card {
+	width: min(100%, 28rem);
+	padding: 2.5rem;
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: 2rem;
+	box-shadow: 0 1rem 3rem rgba(0, 0, 0, .24);
+}
+
+.back-link {
+	width: max-content;
+	position: fixed;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: .5rem;
+	top: 1.5rem;
+	left: 1.5rem;
+}
+
+.back-link p {
+	margin: 0;
+	font-size: 1.2rem;
+	font-weight: 600;
+}
+
+.back-link,
+.form-footer a {
+	color: var(--muted);
+	font-weight: 600;
+}
+
+.auth-card h1 {
+	margin: 0;
+	color: var(--foreground);
+	font-size: 1.8rem;
+}
+
+.auth-card img.auth-logo {
+	width: 50%;
+	height: auto;
+}
+
+.auth-description {
+	margin-top: 1.5rem;
+}
+
+.auth-description p {
+	color: var(--muted);
+	line-height: 1.5;
+}
+
+form {
+	display: grid;
+	gap: .5rem;
+}
+
+label {
+	margin-top: .75rem;
+	color: var(--foreground);
+	font-size: .9rem;
+	font-weight: 600;
+}
+
+input {
+	box-sizing: border-box;
+	width: 100%;
+	padding: .8rem;
+	border: 1px solid var(--input);
+	border-radius: .5rem;
+	outline: 0;
+	background: #09090b;
+	color: var(--foreground);
+	font: inherit;
+}
+
+input:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px rgba(1, 107, 237, .22);
+}
+
+button {
+	margin-top: 1rem;
+	padding: .85rem 1rem;
+	border: 0;
+	border-radius: .5rem;
+	background: var(--accent);
+	color: var(--accent-foreground);
+	cursor: pointer;
+	font: inherit;
+	font-weight: 700;
+	transition: background .2s ease, transform .2s ease;
+}
+
+button:hover {
+	background: #2f8cff;
+	transform: translateY(-1px);
+}
+
+.alert {
+	display: flex;
+	flex-direction: column;
+	gap: .5rem;
+	margin: 1rem 0;
+	padding: .8rem 1rem;
+	border-radius: .5rem;
+}
+
+.alert p:first-child {
+	font-weight: 600;
+}
+
+.alert p:last-child {
+	color: var(--foreground);
+}
+
+.alert p {
+	margin: 0;
+}
+
+.alert-error {
+	background: var(--danger-background);
+	border: 1px solid #542126;
+	color: var(--danger);
+}
+
+.alert-success {
+	background: var(--success-background);
+	border: 1px solid #1d5134;
+	color: var(--success);
+}
+
+.form-footer {
+	margin: 1.5rem 0 0;
+	color: var(--muted);
+	text-align: center;
+}
+
+@media (max-width: 36rem) {
+	.auth-card {
+		padding: 1.5rem;
+	}
+
+	.back-link {
+		top: 1rem;
+		left: 1rem;
+	}
+}
