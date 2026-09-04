@@ -109,11 +109,11 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <?php require __DIR__ . '/includes/header.php'; ?>
 
-    <main>
+    <main class="frontpage<?= isset($_SESSION['user_id']) ? '' : ' frontpage-guest' ?>">
         <?php if (isset($_SESSION['user_id'])): ?>
             <section class="groups-overview" aria-labelledby="groups-heading">
                 <div class="groups-heading-row">
-                    <div>
+                    <div class="groups-heading-row-desc">
                         <h1 id="groups-heading">Grupper</h1>
                         <p>Hittar du ingen grupp för dig? Skapa en ny!</p>
                     </div>
@@ -127,8 +127,7 @@ if (isset($_SESSION['user_id'])) {
                 <?php else: ?>
                     <div class="group-list">
                         <?php foreach ($groups as $group): ?>
-                            <a class="group-card-link" href="/groups?id=<?= (int) $group['id'] ?>"
-                                aria-label="Gå till gruppen <?= escape((string) $group['title']) ?>">
+                            <a class="group-card-link" href="/groups?id=<?= (int) $group['id'] ?>" aria-label="Gå till gruppen <?= escape((string) $group['title']) ?>">
                                 <article class="group-item">
                                     <?php if ($group['image_path'] !== null): ?>
                                         <img src="/<?= escape((string) $group['image_path']) ?>" alt="" loading="lazy">
@@ -178,11 +177,17 @@ if (isset($_SESSION['user_id'])) {
                 </form>
             </dialog>
         <?php else: ?>
-            <p>En plats för gemensamma intressen och diskussioner.</p>
-            <div class="home-actions">
-                <a href="/login/">Logga in</a>
-                <a href="/register/">Skapa konto</a>
-            </div>
+            <section class="welcome-panel" aria-labelledby="welcome-heading">
+                <div class="welcome-content">
+                    <h1 id="welcome-heading">Hitta din gemenskap.</h1>
+                    <p class="welcome-text">Upptäck grupper, dela dina intressen och delta i diskussioner med andra.</p>
+                    <div class="home-actions">
+                        <a class="home-action-secondary" href="/login/">Logga in</a>
+                        <a class="home-action-primary" href="/register/">Skapa konto</a>
+                    </div>
+                </div>
+                <img src="/assets/img/banner.png" alt="" loading="lazy">
+            </section>
         <?php endif; ?>
     </main>
 
