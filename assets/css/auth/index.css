@@ -35,7 +35,6 @@
 }
 
 .back-link p {
-	margin: 0;
 	font-size: 1.2rem;
 	font-weight: 600;
 }
@@ -47,7 +46,6 @@
 }
 
 .auth-card h1 {
-	margin: 0;
 	color: var(--foreground);
 	font-size: 1.8rem;
 }
@@ -128,10 +126,6 @@ button:hover {
 
 .alert p:last-child {
 	color: var(--foreground);
-}
-
-.alert p {
-	margin: 0;
 }
 
 .alert-error {

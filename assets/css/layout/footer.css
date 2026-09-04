@@ -18,7 +18,3 @@ body>main:not(.auth-page) {
     font-size: .85rem;
     text-align: center;
 }
-
-.site-footer p {
-    margin: 0;
-}

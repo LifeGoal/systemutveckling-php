@@ -113,10 +113,6 @@
     color: #e02a2a;
 }
 
-.profile-menu-dropdown form {
-    margin: 0;
-}
-
 .profile-menu-dropdown a {
     display: flex;
     align-items: center;
@@ -124,7 +120,6 @@
     border-radius: .5rem;
     color: #a1a1aa;
     font-size: 1rem;
-    margin: 0;
     font-weight: 500;
     transition: background .15s ease, color .15s ease;
 }
