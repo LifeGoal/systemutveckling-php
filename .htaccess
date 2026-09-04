@@ -1,5 +1,7 @@
 RewriteEngine On
 
+RewriteRule ^(?:\.env|database\.sql)(?:/|$) - [R=404,L,NC]
+
 RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[?\s]) [NC]
 RewriteRule ^(.+)\.php$ /$1 [R=301,L,NE]
 
