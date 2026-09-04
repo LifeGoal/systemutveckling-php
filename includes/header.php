@@ -1,6 +1,6 @@
 <header class="site-header">
     <div class="site-header-inner">
-        <a class="site-logo" href="index" aria-label="LifeForums startsida">
+        <a class="site-logo" href="../index" aria-label="LifeForums startsida">
             <img src="/assets/img/logo.png" alt="LifeForum logotyp">
         </a>
 
