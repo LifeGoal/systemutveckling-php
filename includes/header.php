@@ -14,12 +14,15 @@
                     </summary>
                     <div class="profile-menu-dropdown">
                         <a href="profile">Profil</a>
-                        <a href="logout">Logga ut</a>
+                        <form method="post" action="/logout/">
+                            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                            <button type="submit" class="logout-button">Logga ut</button>
+                        </form>
                     </div>
                 </details>
             <?php else: ?>
-                <a href="login">Logga in</a>
-                <a class="site-primary-nav" href="register">Skapa konto</a>
+                <a href="/login/">Logga in</a>
+                <a class="site-primary-nav" href="/register/">Skapa konto</a>
             <?php endif; ?>
         </nav>
     </div>

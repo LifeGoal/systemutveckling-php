@@ -2,7 +2,16 @@
 
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__ . '/../includes/security.php';
+requireLogin();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Metoden stöds inte.');
+}
+
+verifyCsrfToken($_POST['csrf_token'] ?? null);
+
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
@@ -11,5 +20,5 @@ if (ini_get('session.use_cookies')) {
 }
 
 session_destroy();
-header('Location: index');
+header('Location: /index');
 exit;

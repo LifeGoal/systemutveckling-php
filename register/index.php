@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-session_start();
+require_once __DIR__ . '/../includes/security.php';
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: index');
+    header('Location: /index');
     exit;
 }
 
-require_once __DIR__ . '/db/database.php';
+require_once __DIR__ . '/../db/database.php';
 
 $errors = [];
 $firstName = '';
@@ -17,6 +17,7 @@ $lastName = '';
 $email = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    verifyCsrfToken($_POST['csrf_token'] ?? null);
     $firstName = trim((string) ($_POST['first_name'] ?? ''));
     $lastName = trim((string) ($_POST['last_name'] ?? ''));
     $email = strtolower(trim((string) ($_POST['email'] ?? '')));
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             ]);
 
-            header('Location: login?registered=1');
+            header('Location: /login/?registered=1');
             exit;
         } catch (PDOException $exception) {
             if (($exception->errorInfo[1] ?? null) === 1062) {
@@ -50,9 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function escape(string $value): string {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
 ?>
 
 <!doctype html>
@@ -62,14 +60,14 @@ function escape(string $value): string {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LifeForum - Skapa konto</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="../assets/css/base/index.css">
+    <link rel="stylesheet" href="../assets/css/auth/index.css">
 </head>
 
 <body>
     <main class="auth-page">
         <!-- Visste inte om man fick använda ikon-libraries för denna uppgiften så använde jag en enkel HTML-kod istället -->
-        <a class="back-link" href="index"><p>&#8592;</p> Tillbaka till LifeForum</a>
+        <a class="back-link" href="../index"><p>&#8592;</p> Tillbaka till LifeForum</a>
         <section class="auth-card">
             <img src="/assets/img/logo.png" accesskey="" alt="Logotyp för LifeForum" class="auth-logo">
             <div class="auth-description">
@@ -86,6 +84,7 @@ function escape(string $value): string {
             <?php endif; ?>
 
             <form method="post">
+                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
                 <label for="first_name">Förnamn</label>
                 <input id="first_name" name="first_name" type="text" value="<?= escape($firstName) ?>"
                     placeholder="John" required autocomplete="given-name">
@@ -105,7 +104,7 @@ function escape(string $value): string {
                 <button type="submit">Skapa konto</button>
             </form>
 
-            <p class="form-footer">Har du redan ett konto? <a href="login">Logga in</a></p>
+            <p class="form-footer">Har du redan ett konto? <a href="/login/">Logga in</a></p>
         </section>
     </main>
 </body>

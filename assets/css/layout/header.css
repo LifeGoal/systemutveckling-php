@@ -98,8 +98,9 @@
     top: calc(100% + .5rem);
     right: 0;
     z-index: 10;
-    display: grid;
-    min-width: 11rem;
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
     padding: .5rem;
     border: 1px solid #27272a;
     border-radius: .5rem;
@@ -108,18 +109,22 @@
     animation: profile-menu-enter .12s ease-out;
 }
 
-.profile-menu-dropdown a {
+.profile-menu-dropdown .logout-button {
+    color: #e02a2a;
+}
+
+.profile-menu-dropdown form {
     margin: 0;
 }
 
 .profile-menu-dropdown a {
     display: flex;
     align-items: center;
-    min-height: 2.5rem;
-    padding: 0 .5rem;
+    padding: .5rem 1rem;
     border-radius: .5rem;
     color: #a1a1aa;
     font-size: 1rem;
+    margin: 0;
     font-weight: 500;
     transition: background .15s ease, color .15s ease;
 }
@@ -129,7 +134,34 @@
     color: var(--foreground);
 }
 
+.profile-menu-dropdown button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: .5rem 1rem;
+    border: 0;
+    border-radius: .5rem;
+    background: transparent;
+    color: #a1a1aa;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    transition: background .15s ease, color .15s ease;
+}
+
+.profile-menu-dropdown button:hover {
+    background: #27272a;
+    color: var(--foreground);
+}
+
 .profile-menu-dropdown a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.profile-menu-dropdown button:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
 }
