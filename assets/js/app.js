@@ -41,3 +41,16 @@ document.querySelectorAll('dialog').forEach((dialog) => {
 		}
 	});
 });
+
+document.querySelectorAll('[data-expandable-description]').forEach((description) => {
+	const text = description.querySelector('[data-description-text]') || description.querySelector('.group-description-text');
+	const toggle = description.querySelector('[data-description-toggle]');
+
+	if (!text || !toggle) return;
+
+	toggle.addEventListener('click', () => {
+		const isExpanded = description.classList.toggle('is-expanded');
+		toggle.setAttribute('aria-expanded', String(isExpanded));
+		toggle.textContent = isExpanded ? 'Visa mindre' : 'Läs mer...';
+	});
+});
