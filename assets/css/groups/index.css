@@ -255,12 +255,6 @@ button {
     overflow-wrap: anywhere;
 }
 
-.post-notice {
-    display: block;
-    margin-top: .75rem;
-    color: #86efac;
-}
-
 .reply-form {
     display: flex;
     flex-direction: column;
