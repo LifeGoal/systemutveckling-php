@@ -127,7 +127,7 @@ if (isset($_SESSION['user_id'])) {
                 <?php else: ?>
                     <div class="group-list">
                         <?php foreach ($groups as $group): ?>
-                            <a class="group-card-link" href="/groups?groupid=<?= (int) $group['id'] ?>"
+                            <a class="group-card-link" href="/groups?id=<?= (int) $group['id'] ?>"
                                 aria-label="Gå till gruppen <?= escape((string) $group['title']) ?>">
                                 <article class="group-item">
                                     <?php if ($group['image_path'] !== null): ?>
