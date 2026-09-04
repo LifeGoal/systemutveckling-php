@@ -10,7 +10,7 @@ body>main:not(.auth-page) {
 
 .site-footer {
     flex-shrink: 0;
-    width: 80%;
+    width: 100%;
     margin: 0 auto;
     padding: 1.5rem 0;
     border-top: 1px solid var(--border);
