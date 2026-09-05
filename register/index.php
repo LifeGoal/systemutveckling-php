@@ -86,20 +86,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post">
                 <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
                 <label for="first_name">Förnamn</label>
-                <input id="first_name" name="first_name" type="text" value="<?= escape($firstName) ?>"
-                    placeholder="John" required autocomplete="given-name">
+                <input id="first_name" name="first_name" type="text" value="<?= escape($firstName) ?>" placeholder="John" required autocomplete="given-name">
 
                 <label for="last_name">Efternamn</label>
-                <input id="last_name" name="last_name" type="text" value="<?= escape($lastName) ?>"
-                    placeholder="Andersson" required autocomplete="family-name">
+                <input id="last_name" name="last_name" type="text" value="<?= escape($lastName) ?>" placeholder="Andersson" required autocomplete="family-name">
 
                 <label for="email">E-post</label>
-                <input id="email" name="email" type="email" value="<?= escape($email) ?>" required
-                    placeholder="john.andersson@email.se" autocomplete="email">
+                <input id="email" name="email" type="email" value="<?= escape($email) ?>" required placeholder="john.andersson@email.se" autocomplete="email">
 
                 <label for="password">Lösenord</label>
-                <input id="password" name="password" type="password" required minlength="8" placeholder="Ditt lösenord"
-                    autocomplete="new-password">
+                <input id="password" name="password" type="password" required minlength="8" placeholder="Ditt lösenord" autocomplete="new-password">
 
                 <button type="submit">Skapa konto</button>
             </form>

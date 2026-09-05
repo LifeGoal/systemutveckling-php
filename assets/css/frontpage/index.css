@@ -24,7 +24,7 @@
     align-items: stretch;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: .75rem;
+    border-radius: 1rem;
     background: #111113;
     margin: auto;
 }
@@ -63,7 +63,7 @@
     min-height: 2.75rem;
     padding: .65rem 1rem;
     border: 0;
-    border-radius: .4rem;
+    border-radius: .5rem;
     font-weight: 700;
 }
 

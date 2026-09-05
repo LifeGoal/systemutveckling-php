@@ -9,17 +9,22 @@
 
 .auth-page {
 	min-height: 100vh;
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	place-items: center;
+	place-content: center;
 	background: radial-gradient(circle at 50% -20%, #06234a 0, var(--background) 42rem);
 }
 
 .auth-card {
-	width: min(100%, 28rem);
-	padding: 2.5rem;
+	display: flex;
+	flex-direction: column;
+	width: min(100% - 2rem, 28rem);
+	padding: 2rem;
 	background: var(--card);
 	border: 1px solid var(--border);
-	border-radius: 2rem;
+	border-radius: 1rem;
+	gap: 1rem;
 	box-shadow: 0 1rem 3rem rgba(0, 0, 0, .24);
 }
 
@@ -55,17 +60,14 @@
 	height: auto;
 }
 
-.auth-description {
-	margin-top: 1.5rem;
-}
-
 .auth-description p {
 	color: var(--muted);
 	line-height: 1.5;
 }
 
 form {
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	gap: .5rem;
 }
 
