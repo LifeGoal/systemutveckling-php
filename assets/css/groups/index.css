@@ -209,6 +209,26 @@
     padding-top: 1.25rem;
 }
 
+.admin-help-text {
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.invitation-form {
+    margin: 0;
+}
+
+.invitation-result {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.invitation-result input {
+    color: var(--muted);
+    font-size: .85rem;
+}
+
 .admin-section-heading {
     align-items: baseline;
 }
@@ -470,16 +490,6 @@ button {
 
     .admin-modal {
         padding: 1rem;
-    }
-
-    .member-row,
-    .application {
-        flex-direction: column;
-    }
-
-    .member-actions,
-    .application-actions {
-        width: 100%;
     }
 }
 

@@ -10,7 +10,14 @@ $groupId = $groupId === false || $groupId === null ? 0 : $groupId;
 $database = getDatabaseConnection();
 $error = '';
 $success = '';
+$hotLink = '';
 $publishedReplyId = 0;
+
+if (($_GET['invite'] ?? '') === 'joined') {
+    $success = 'Du har gått med i gruppen via länken.';
+} elseif (($_GET['invite'] ?? '') === 'already-member') {
+    $success = 'Du är redan medlem i gruppen.';
+}
 
 if ($groupId < 1) {
     http_response_code(404);
@@ -117,6 +124,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $success = $action === 'approve' ? 'Ansökan har godkänts.' : 'Ansökan har nekats.';
             }
         } elseif (($action === 'approve' || $action === 'reject') && !$isAdmin) {
+            $error = 'Du saknar behörighet för detta.';
+        } elseif ($action === 'create_invitation' && $isAdmin) {
+            $token = bin2hex(random_bytes(32));
+            $tokenHash = hash('sha256', $token);
+            $statement = $database->prepare('INSERT INTO group_invitations (group_id, created_by, token_hash, expires_at) VALUES (:group_id, :created_by, :token_hash, DATE_ADD(NOW(), INTERVAL 24 HOUR))');
+            $statement->execute(['group_id' => $groupId, 'created_by' => $userId, 'token_hash' => $tokenHash]);
+            $hotLink = '/invite/?token=' . urlencode($token);
+            $success = 'Länken har skapats och gäller i 24 timmar.';
+        } elseif ($action === 'create_invitation') {
             $error = 'Du saknar behörighet för detta.';
         } elseif ($action === 'change_role' && $isAdmin) {
             $memberId = filter_var($_POST['member_id'] ?? null, FILTER_VALIDATE_INT);
@@ -343,7 +359,7 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                 </section>
             </div>
             <?php if ($isAdmin): ?>
-                <dialog class="admin-modal" id="admin-modal" aria-labelledby="admin-modal-title">
+                <dialog class="admin-modal" id="admin-modal" aria-labelledby="admin-modal-title" <?= $hotLink !== '' ? 'open' : '' ?>>
                     <div class="admin-modal-header">
                         <h2 id="admin-modal-title">Adminpanelen</h2>
                         <button class="modal-close-button" type="button" data-modal-close="admin-modal" aria-label="Stäng">&times;</button>
@@ -380,6 +396,25 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+
+                    <section class="admin-modal-section" aria-labelledby="invitation-title">
+                        <div class="admin-section-heading">
+                            <h3 id="invitation-title">Inbjudningslänk</h3>
+                            <span class="admin-count">Gäller i 24 timmar</span>
+                        </div>
+                        <p class="admin-help-text">Skapa en länk som automatiskt lägger till en användare i gruppen.</p>
+                        <form class="invitation-form" method="post">
+                            <input type="hidden" name="action" value="create_invitation">
+                            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                            <button type="submit">Skapa länk</button>
+                        </form>
+                        <?php if ($hotLink !== ''): ?>
+                            <div class="invitation-result">
+                                <label for="hot-link">Ny länk</label>
+                                <input id="hot-link" type="text" value="<?= escape('http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $hotLink) ?>" readonly>
                             </div>
                         <?php endif; ?>
                     </section>
