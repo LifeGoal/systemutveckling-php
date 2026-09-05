@@ -115,6 +115,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } elseif ($action === 'approve') {
             $error = 'Du saknar behörighet för detta.';
+        } elseif ($action === 'delete_discussion' && $isAdmin) {
+            $discussionId = filter_var($_POST['discussion_id'] ?? null, FILTER_VALIDATE_INT);
+            $discussionId = $discussionId === false || $discussionId === null ? 0 : $discussionId;
+            $statement = $database->prepare('DELETE FROM discussions WHERE id = :discussion_id AND group_id = :group_id');
+            $statement->execute(['discussion_id' => $discussionId, 'group_id' => $groupId]);
+            $success = $statement->rowCount() === 1 ? 'Diskussionen har raderats.' : 'Diskussionen kunde inte hittas.';
+        } elseif ($action === 'delete_post' && $isAdmin) {
+            $postId = filter_var($_POST['post_id'] ?? null, FILTER_VALIDATE_INT);
+            $postId = $postId === false || $postId === null ? 0 : $postId;
+            $statement = $database->prepare('DELETE p FROM posts AS p INNER JOIN discussions AS d ON d.id = p.discussion_id WHERE p.id = :post_id AND d.group_id = :group_id');
+            $statement->execute(['post_id' => $postId, 'group_id' => $groupId]);
+            $success = $statement->rowCount() === 1 ? 'Inlägget har raderats.' : 'Inlägget kunde inte hittas.';
+        } elseif ($action === 'delete_discussion' || $action === 'delete_post') {
+            $error = 'Du saknar behörighet för detta.';
         }
     } catch (Throwable $exception) {
         if ($database->inTransaction()) {
@@ -227,6 +241,14 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                     <?php foreach ($discussions as $discussion): ?>
                         <article class="discussion">
                             <div class="discussion-header">
+                                <?php if ($isAdmin): ?>
+                                    <form class="delete-form discussion-delete-form" method="post">
+                                        <input type="hidden" name="action" value="delete_discussion">
+                                        <input type="hidden" name="discussion_id" value="<?= (int) $discussion['id'] ?>">
+                                        <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                        <button class="delete-button" type="submit" aria-label="Radera diskussionen" title="Radera diskussionen">&#128465;</button>
+                                    </form>
+                                <?php endif; ?>
                                 <h3><?= escape((string) $discussion['subject']) ?></h3>
                                 <p class="discussion-meta">Startad av <?= escape((string) $discussion['first_name'] . ' ' . $discussion['last_name']) ?></p>
                                 <p class="discussion-meta"><strong><?= (int) $discussion['post_count'] ?></strong> inlägg totalt</p>
@@ -244,6 +266,14 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                             </div>
                             <?php foreach (array_slice($discussion['posts'], 1) as $postNumber => $post): ?>
                                 <div class="post reply-post">
+                                    <?php if ($isAdmin): ?>
+                                        <form class="delete-form post-delete-form" method="post">
+                                            <input type="hidden" name="action" value="delete_post">
+                                            <input type="hidden" name="post_id" value="<?= (int) $post['id'] ?>">
+                                            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                            <button class="delete-button" type="submit" aria-label="Radera inlägget" title="Radera inlägget">&#128465;</button>
+                                        </form>
+                                    <?php endif; ?>
                                     <div class="post-byline">
                                         <strong><?= escape((string) $post['first_name'] . ' ' . $post['last_name']) ?></strong>
                                         <span>#<?= $postNumber + 2 ?></span>

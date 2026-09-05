@@ -201,9 +201,11 @@ button {
 }
 
 .discussion-header {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: .5rem;
+    padding-right: 2.5rem;
 }
 
 .discussion-meta {
@@ -211,6 +213,7 @@ button {
 }
 
 .opening-post {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: .2rem;
@@ -219,12 +222,38 @@ button {
 }
 
 .post {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: .2rem;
     padding: .9rem 1rem;
+    padding-right: 3.5rem;
     background: #18181b;
     border-radius: .5rem;
+}
+
+.delete-form {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+}
+
+.delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    min-height: 2rem;
+    padding: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+.delete-button:hover,
+.delete-button:focus-visible {
+    background: #3f1d1d;
+    color: #fca5a5;
 }
 
 .post-byline {
