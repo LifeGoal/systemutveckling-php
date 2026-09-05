@@ -89,7 +89,6 @@
 }
 
 .profile-menu[open] .profile-menu-trigger::after {
-    margin-top: .5rem;
     transform: rotate(225deg);
 }
 
@@ -110,7 +109,12 @@
 }
 
 .profile-menu-dropdown .logout-button {
+    padding-left: 1rem;
     color: #e02a2a;
+}
+
+.profile-menu-dropdown form {
+    margin: 0;
 }
 
 .profile-menu-dropdown a {
@@ -133,6 +137,7 @@
     display: flex;
     align-items: center;
     width: 100%;
+    box-sizing: border-box;
     padding: .5rem 1rem;
     border: 0;
     border-radius: .5rem;
@@ -192,6 +197,10 @@
     .profile-menu-trigger {
         padding: 0 .5rem;
         font-size: 1rem;
+    }
+
+    .profile-menu-dropdown .logout-button {
+        padding-left: .5rem;
     }
 }
 
