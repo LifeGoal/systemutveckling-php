@@ -48,6 +48,10 @@ document.querySelectorAll('[data-expandable-description]').forEach((description)
 
 	if (!text || !toggle) return;
 
+	if (text.scrollHeight > text.clientHeight) {
+		description.classList.add('is-expandable');
+	}
+
 	toggle.addEventListener('click', () => {
 		const isExpanded = description.classList.toggle('is-expanded');
 		toggle.setAttribute('aria-expanded', String(isExpanded));
