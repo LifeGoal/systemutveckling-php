@@ -87,6 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'group_id' => $groupId,
                     ]);
                     if ($statement->rowCount() === 1) {
+                        $statement = $database->prepare('UPDATE discussions SET updated_at = CURRENT_TIMESTAMP WHERE id = :discussion_id AND group_id = :group_id');
+                        $statement->execute(['discussion_id' => $discussionId, 'group_id' => $groupId]);
                         $publishedReplyId = (int) $database->lastInsertId();
                     } else {
                         $error = 'Diskussionen kunde inte hittas.';
