@@ -1,11 +1,11 @@
 <header class="site-header">
     <div class="site-header-inner">
-        <a class="site-logo" href="../index" aria-label="LifeForums startsida">
+        <a class="site-logo" href="/index" aria-label="LifeForums startsida">
             <img src="/assets/img/logo.png" alt="LifeForum logotyp">
         </a>
 
         <nav class="site-nav" aria-label="Huvudnavigation">
-            <a href="index">Hem</a>
+            <a href="/index">Hem</a>
             <?php if (isset($_SESSION['user_id'])): ?>
                 <details class="profile-menu">
                     <summary class="profile-menu-trigger">
