@@ -233,18 +233,18 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                                     <div class="opening-post">
                                         <div class="post-byline">
                                             <strong><?= escape((string) $openingPost['first_name'] . ' ' . $openingPost['last_name']) ?></strong>
-                                            <span>#<?= (int) $openingPost['id'] ?></span>
+                                            <span>#1</span>
                                             <time datetime="<?= escape((string) $openingPost['created_at']) ?>"><?= escape((string) $openingPost['created_at']) ?></time>
                                         </div>
                                         <p><?= nl2br(escape((string) $openingPost['content'])) ?></p>
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <?php foreach (array_slice($discussion['posts'], 1) as $post): ?>
+                            <?php foreach (array_slice($discussion['posts'], 1) as $postNumber => $post): ?>
                                 <div class="post reply-post">
                                     <div class="post-byline">
                                         <strong><?= escape((string) $post['first_name'] . ' ' . $post['last_name']) ?></strong>
-                                        <span>#<?= (int) $post['id'] ?></span>
+                                        <span>#<?= $postNumber + 2 ?></span>
                                         <time datetime="<?= escape((string) $post['created_at']) ?>"><?= escape((string) $post['created_at']) ?></time>
                                     </div>
                                     <p><?= nl2br(escape((string) $post['content'])) ?></p>
