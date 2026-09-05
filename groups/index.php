@@ -179,7 +179,7 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
             <?php if ($group['image_path'] !== null): ?><img src="/<?= escape((string) $group['image_path']) ?>" alt=""><?php endif; ?>
             <div class="group-hero-content">
                 <h1><?= escape((string) $group['title']) ?></h1>
-                <div class="group-description<?= strlen((string) $group['description']) > 180 ? ' is-expandable' : '' ?>" data-expandable-description>
+                <div class="group-description" data-expandable-description>
                     <p class="group-description-text"><?= escape((string) $group['description']) ?></p>
                     <button class="read-more-button" type="button" data-description-toggle aria-expanded="false">Läs mer...</button>
                 </div>
