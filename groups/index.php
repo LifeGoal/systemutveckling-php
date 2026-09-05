@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             }
-        } elseif ($action === 'approve' && $isAdmin) {
+        } elseif (($action === 'approve' || $action === 'reject') && $isAdmin) {
             $applicationId = filter_var($_POST['application_id'] ?? null, FILTER_VALIDATE_INT);
             $applicationId = $applicationId === false || $applicationId === null ? 0 : $applicationId;
             $database->beginTransaction();
@@ -106,14 +106,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $database->rollBack();
                 $error = 'Ansökan kunde inte hittas.';
             } else {
-                $statement = $database->prepare('INSERT INTO group_members (group_id, user_id, role) VALUES (:group_id, :user_id, \'member\')');
-                $statement->execute(['group_id' => $groupId, 'user_id' => $application['user_id']]);
-                $statement = $database->prepare('UPDATE group_applications SET status = \'approved\', reviewed_by = :reviewed_by, reviewed_at = NOW() WHERE id = :application_id');
-                $statement->execute(['reviewed_by' => $userId, 'application_id' => $applicationId]);
+                if ($action === 'approve') {
+                    $statement = $database->prepare('INSERT INTO group_members (group_id, user_id, role) VALUES (:group_id, :user_id, \'member\')');
+                    $statement->execute(['group_id' => $groupId, 'user_id' => $application['user_id']]);
+                }
+                $status = $action === 'approve' ? 'approved' : 'rejected';
+                $statement = $database->prepare('UPDATE group_applications SET status = :status, reviewed_by = :reviewed_by, reviewed_at = NOW() WHERE id = :application_id');
+                $statement->execute(['status' => $status, 'reviewed_by' => $userId, 'application_id' => $applicationId]);
                 $database->commit();
-                $success = 'Ansökan har godkänts.';
+                $success = $action === 'approve' ? 'Ansökan har godkänts.' : 'Ansökan har nekats.';
             }
-        } elseif ($action === 'approve') {
+        } elseif (($action === 'approve' || $action === 'reject') && !$isAdmin) {
+            $error = 'Du saknar behörighet för detta.';
+        } elseif ($action === 'change_role' && $isAdmin) {
+            $memberId = filter_var($_POST['member_id'] ?? null, FILTER_VALIDATE_INT);
+            $memberId = $memberId === false || $memberId === null ? 0 : $memberId;
+            $role = (string) ($_POST['role'] ?? '');
+
+            if ($memberId < 1 || !in_array($role, ['member', 'admin'], true)) {
+                $error = 'Den valda rollen är inte giltig.';
+            } elseif ($memberId === $userId) {
+                $error = 'Du kan inte ändra din egen roll.';
+            } else {
+                $statement = $database->prepare('UPDATE group_members SET role = :role WHERE group_id = :group_id AND user_id = :user_id');
+                $statement->execute(['role' => $role, 'group_id' => $groupId, 'user_id' => $memberId]);
+                if ($statement->rowCount() === 1) {
+                    $success = 'Rollen har ändrats.';
+                } else {
+                    $memberStatement = $database->prepare('SELECT 1 FROM group_members WHERE group_id = :group_id AND user_id = :user_id');
+                    $memberStatement->execute(['group_id' => $groupId, 'user_id' => $memberId]);
+                    $success = $memberStatement->fetchColumn() !== false ? 'Rollen är oförändrad.' : 'Medlemmen kunde inte hittas.';
+                }
+            }
+        } elseif ($action === 'change_role') {
+            $error = 'Du saknar behörighet för detta.';
+        } elseif ($action === 'remove_member' && $isAdmin) {
+            $memberId = filter_var($_POST['member_id'] ?? null, FILTER_VALIDATE_INT);
+            $memberId = $memberId === false || $memberId === null ? 0 : $memberId;
+
+            if ($memberId < 1) {
+                $error = 'Medlemmen kunde inte hittas.';
+            } elseif ($memberId === $userId) {
+                $error = 'Du kan inte sparka ut dig själv ur gruppen.';
+            } else {
+                $statement = $database->prepare('DELETE FROM group_members WHERE group_id = :group_id AND user_id = :user_id');
+                $statement->execute(['group_id' => $groupId, 'user_id' => $memberId]);
+                $success = $statement->rowCount() === 1 ? 'Medlemmen har tagits bort från gruppen.' : 'Medlemmen kunde inte hittas.';
+            }
+        } elseif ($action === 'remove_member') {
             $error = 'Du saknar behörighet för detta.';
         } elseif ($action === 'delete_discussion' && $isAdmin) {
             $discussionId = filter_var($_POST['discussion_id'] ?? null, FILTER_VALIDATE_INT);
@@ -164,10 +204,15 @@ if ($isMember) {
 }
 
 $applications = [];
+$members = [];
 if ($isAdmin) {
     $statement = $database->prepare('SELECT a.id, a.created_at, u.first_name, u.last_name, u.email FROM group_applications AS a INNER JOIN users AS u ON u.id = a.user_id WHERE a.group_id = :group_id AND a.status = \'pending\' ORDER BY a.created_at ASC');
     $statement->execute(['group_id' => $groupId]);
     $applications = $statement->fetchAll();
+
+    $statement = $database->prepare('SELECT gm.user_id, gm.role, u.first_name, u.last_name, u.email FROM group_members AS gm INNER JOIN users AS u ON u.id = gm.user_id WHERE gm.group_id = :group_id ORDER BY gm.role DESC, u.first_name, u.last_name');
+    $statement->execute(['group_id' => $groupId]);
+    $members = $statement->fetchAll();
 }
 
 $pageTitle = (string) 'LifeForum - ' . $group['title'];
@@ -218,7 +263,12 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
         <?php else: ?>
             <div class="group-columns">
                 <section class="discussion-section">
-                    <h2>Diskussioner</h2>
+                    <div class="section-heading">
+                        <h2>Diskussioner</h2>
+                        <?php if ($isAdmin): ?>
+                            <button class="admin-open-button" type="button" data-modal-open="admin-modal">Admin</button>
+                        <?php endif; ?>
+                    </div>
                     <form class="discussion-form" method="post">
                         <h3>Starta en diskussion</h3>
                         <input type="hidden" name="action" value="create_discussion">
@@ -291,30 +341,91 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
                             </form>
                         </article><?php endforeach; ?>
                 </section>
-                <?php if ($isAdmin): ?>
-                    <aside class="admin-panel">
-                        <h2>Ansökningar</h2>
-                        <div class="admin-panel-content">
-                            <?php if ($applications === []): ?>
-                                <p>Inga väntande ansökningar.</p>
-                            <?php else: ?>
+            </div>
+            <?php if ($isAdmin): ?>
+                <dialog class="admin-modal" id="admin-modal" aria-labelledby="admin-modal-title">
+                    <div class="admin-modal-header">
+                        <h2 id="admin-modal-title">Adminpanelen</h2>
+                        <button class="modal-close-button" type="button" data-modal-close="admin-modal" aria-label="Stäng">&times;</button>
+                    </div>
+
+                    <section class="admin-modal-section" aria-labelledby="applications-title">
+                        <div class="admin-section-heading">
+                            <h3 id="applications-title">Ansökningar</h3>
+                            <span class="admin-count"><?= count($applications) ?> väntande</span>
+                        </div>
+                        <?php if ($applications === []): ?>
+                            <p class="empty-state">Det finns inga ansökningar.</p>
+                        <?php else: ?>
+                            <div class="admin-list">
                                 <?php foreach ($applications as $pending): ?>
                                     <div class="application">
-                                        <strong><?= escape((string) $pending['first_name'] . ' ' . $pending['last_name']) ?></strong>
-                                        <small><?= escape((string) $pending['email']) ?></small>
-                                        <form method="post">
-                                            <input type="hidden" name="action" value="approve">
-                                            <input type="hidden" name="application_id" value="<?= (int) $pending['id'] ?>">
-                                            <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
-                                            <button type="submit">Godkänn</button>
-                                        </form>
+                                        <div>
+                                            <strong><?= escape((string) $pending['first_name'] . ' ' . $pending['last_name']) ?></strong>
+                                            <small><?= escape((string) $pending['email']) ?></small>
+                                        </div>
+                                        <div class="application-actions">
+                                            <form method="post">
+                                                <input type="hidden" name="action" value="approve">
+                                                <input type="hidden" name="application_id" value="<?= (int) $pending['id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                                <button type="submit">Godkänn</button>
+                                            </form>
+                                            <form method="post">
+                                                <input type="hidden" name="action" value="reject">
+                                                <input type="hidden" name="application_id" value="<?= (int) $pending['id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                                <button class="secondary-button" type="submit">Neka</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 <?php endforeach; ?>
-                            <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                    </section>
+
+                    <section class="admin-modal-section" aria-labelledby="members-title">
+                        <div class="admin-section-heading">
+                            <h3 id="members-title">Medlemmar</h3>
+                            <span class="admin-count"><?= count($members) ?> totalt</span>
                         </div>
-                    </aside>
-                <?php endif; ?>
-            </div>
+                        <div class="admin-list">
+                            <?php foreach ($members as $member): ?>
+                                <div class="member-row">
+                                    <div class="member-details">
+                                        <strong><?= escape((string) $member['first_name'] . ' ' . $member['last_name']) ?></strong>
+                                        <small><?= escape((string) $member['email']) ?></small>
+                                    </div>
+                                    <?php if ((int) $member['user_id'] === $userId): ?>
+                                        <span class="member-you">Du</span>
+                                    <?php else: ?>
+                                        <div class="member-actions">
+                                            <form method="post" class="role-form">
+                                                <input type="hidden" name="action" value="change_role">
+                                                <input type="hidden" name="member_id" value="<?= (int) $member['user_id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                                <!-- La till så bara användare med screen reader kan se denna. Ser inte snyggt ut om man skulle se det xd. Testade, så behöll det! -->
+                                                <label class="sr-only" for="role-<?= (int) $member['user_id'] ?>">Roll för <?= escape((string) $member['first_name']) ?></label>
+                                                <select id="role-<?= (int) $member['user_id'] ?>" name="role">
+                                                    <option value="member" <?= $member['role'] === 'member' ? 'selected' : '' ?>>Medlem</option>
+                                                    <option value="admin" <?= $member['role'] === 'admin' ? 'selected' : '' ?>>Administratör</option>
+                                                </select>
+                                                <button class="secondary-button" type="submit">Spara</button>
+                                            </form>
+                                            <form method="post" onsubmit="return confirm('Vill du verkligen ta bort personen från gruppen?');">
+                                                <input type="hidden" name="action" value="remove_member">
+                                                <input type="hidden" name="member_id" value="<?= (int) $member['user_id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
+                                                <button class="danger-button" type="submit">Sparka</button>
+                                            </form>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
+                </dialog>
+            <?php endif; ?>
         <?php endif; ?>
     </main>
     <?php require __DIR__ . '/../includes/footer.php'; ?>
