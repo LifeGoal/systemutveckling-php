@@ -242,6 +242,7 @@ $pageTitle = (string) 'LifeForum - ' . $group['title'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Gruppdiskussioner på LifeForum.">
     <title><?= escape($pageTitle) ?></title>
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/assets/css/base/index.css">
     <link rel="stylesheet" href="/assets/css/layout/header.css">
     <link rel="stylesheet" href="/assets/css/layout/footer.css">

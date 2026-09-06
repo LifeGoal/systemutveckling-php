@@ -99,6 +99,7 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?= htmlspecialchars($pageDesc, ENT_QUOTES, 'UTF-8') ?>">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+    <link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="assets/css/base/index.css">
     <link rel="stylesheet" href="assets/css/layout/header.css">
     <link rel="stylesheet" href="assets/css/layout/footer.css">
