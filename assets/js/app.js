@@ -31,6 +31,11 @@ document.querySelectorAll('[data-modal-close]').forEach((closeButton) => {
 });
 
 document.querySelectorAll('dialog').forEach((dialog) => {
+	if (dialog.hasAttribute('open') && typeof dialog.showModal === 'function') {
+		dialog.removeAttribute('open');
+		dialog.showModal();
+	}
+
 	dialog.addEventListener('pointerdown', (event) => {
 		if (event.target === dialog) {
 			if (typeof dialog.close === 'function') {
