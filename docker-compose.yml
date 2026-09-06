@@ -1,4 +1,21 @@
 services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-lifeforum}
+      MARIADB_ROOT_PASSWORD: ${DB_PASSWORD:-lifeforum}
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/01-database.sql:ro
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   site:
     build:
       context: .
@@ -9,9 +26,29 @@ services:
       - ./:/var/www/html
     ports:
       - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      DB_HOST: ${DB_HOST}
-      DB_PORT: ${DB_PORT}
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-lifeforum}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-lifeforum}
+
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PASSWORD:-lifeforum}
+    ports:
+      - "8081:80"
+
+volumes:
+  mariadb-data:
