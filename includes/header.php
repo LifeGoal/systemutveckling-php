@@ -13,7 +13,6 @@
                         <?= htmlspecialchars((string) $_SESSION['last_name'], ENT_QUOTES, 'UTF-8') ?>
                     </summary>
                     <div class="profile-menu-dropdown">
-                        <a href="profile">Profil</a>
                         <form method="post" action="/logout/">
                             <input type="hidden" name="csrf_token" value="<?= escape(csrfToken()) ?>">
                             <button type="submit" class="logout-button">Logga ut</button>

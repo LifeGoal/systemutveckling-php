@@ -111,6 +111,7 @@
 .profile-menu-dropdown .logout-button {
     padding-left: 1rem;
     color: #e02a2a;
+    margin: 0;
 }
 
 .profile-menu-dropdown form {
